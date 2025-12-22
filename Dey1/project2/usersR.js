@@ -3,7 +3,7 @@ import fs from "fs/promises"
 
 export default router = express.Router();
 
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf8')
         const json = JSON.parse(file)
@@ -14,7 +14,7 @@ router.get("/users", async (req, res) => {
     }
 })
 
-router.get("/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf8')
         const json = JSON.parse(file);
@@ -32,7 +32,7 @@ router.get("/users/:id", async (req, res) => {
 })
 
 
-router.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf8')
         const json = JSON.parse(file);
@@ -47,7 +47,7 @@ router.post("/users", async (req, res) => {
     }
 })
 
-router.put("/users/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf-8');
         const json = JSON.parse(file);
@@ -71,7 +71,7 @@ router.put("/users/:id", async (req, res) => {
     }
 })
 
-app.delete("/users/:id", async (req, res) => {
+app.delete("/:id", async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf-8');
         const json = JSON.parse(file);
