@@ -35,7 +35,7 @@ export const addUser = async (req, res) => {
         const newUser = { name: req.body.name, id: json.length + 1 };
         json.push(newUser);
         const string = JSON.stringify(json);
-        const newFile = await fs.writeFile('./users.json', string, () => { });
+        const newFile = await fs.writeFile('./users.json', string);
         res.send(newFile);
     } catch (error) {
         res.status(500);
