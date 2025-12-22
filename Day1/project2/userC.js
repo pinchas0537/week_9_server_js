@@ -1,66 +1,64 @@
 import fs from "fs/promises"
 
-const globalReadFile = await fs.readFile('./users.json', 'utf8');
-const globalJson = JSON.parse(globalReadFile);
+const readfile = async () => {
+    try {
+        const data = await fs.readFile('./users.json', 'utf8');
+        return JSON.parse(data || "[]");
+    } catch {
+        return []
+    }
+}
 
-const globalWriteFile = async () => {
-    const data = JSON.stringify(globalJson)
+const globalWriteFile = async (json) => {
+    const data = JSON.stringify(json)
     await fs.writeFile('./users.json', data)
 }
 
 export const getAllUsers = async (req, res) => {
     try {
-        globalReadFile
-        globalJson
-        res.send(globalJson);
+        const users = await readfile()
+        res.json(users);
     } catch (error) {
-        res.status(500);
-        res.json({ error });
+        res.status(500).json({ error: error.message });
     }
 };
 
 export const getUserById = async (req, res) => {
     try {
-        globalReadFile;
-        globalJson;
-        const jsonFind = globalJson.find(user => req.params.id == user.id);
+        const users = await readfile()
+        const jsonFind = users.find(user => Number(req.params.id) === user.id);
         if (jsonFind) {
             res.send(jsonFind);
         } else {
-            res.status(404);
-            res.send({});
+            res.status(404).json({});
         }
     } catch (error) {
-        res.status(500);
-        res.json({ error });
+        res.status(500).json({ error: error.message });
     }
 };
 
 export const addUser = async (req, res) => {
     try {
-        globalReadFile
-        globalJson
-        const newUser = { name: req.body.name, id: globalJson.length + 1 };
-        globalJson.push(newUser);
-        await globalWriteFile();
-        res.json("Added successfully.");
+        const users = await readfile()
+        const newUser = { name: req.body.name, id: users.length + 1 };
+        users.push(newUser);
+        await globalWriteFile(users);
+        res.json({ message: "Added successfully.", user: newUser });
     } catch (error) {
-        res.status(500);
-        res.send(error);
+        res.status(500).json({ error: error.message });
     }
 };
 
 export const editUserByID = async (req, res) => {
     try {
-        globalReadFile
-        globalJson
+        const read = await readfile()
         const itemId = req.params.id;
         const itemName = req.body.name;
-        const update = globalJson.find(user => user.id == itemId
+        const update = read.find(user => user.id == itemId
         )
         if (update) {
             update.name = itemName;
-            await globalWriteFile();
+            await globalWriteFile(read);
             res.json("You have successfully edited.");
         }
         else {
@@ -75,13 +73,12 @@ export const editUserByID = async (req, res) => {
 
 export const delUser = async (req, res) => {
     try {
-        globalReadFile
-        globalJson
+        const read = await readfile()
         const itemId = req.params.id;
-        const del = globalJson.findIndex(user => user.id == itemId);
+        const del = read.findIndex(user => user.id == itemId);
         if (del != -1) {
-            globalJson.splice(del, 1);
-            await globalWriteFile()
+            read.splice(del, 1);
+            await globalWriteFile(read)
             res.json({ "deleted": true });
         }
         else {
