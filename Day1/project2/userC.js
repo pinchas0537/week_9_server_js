@@ -15,8 +15,8 @@ export const getUserById = async (req, res) => {
     try {
         const file = await fs.readFile('./users.json', 'utf8');
         const json = JSON.parse(file);
-        const jsonFind = json.filter((user) => req.params.id == user.id);
-        if (jsonFind.length > 0) {
+        const jsonFind = json.find(user => req.params.id == user.id);
+        if (jsonFind) {
             res.send(jsonFind);
         } else {
             res.status(404);
@@ -49,7 +49,7 @@ export const editUserByID = async (req, res) => {
         const json = JSON.parse(file);
         const itemId = req.params.id;
         const itemName = req.body.name;
-        const update = json.find((user) => user.id == itemId
+        const update = json.find(user => user.id == itemId
         )
         if (update) {
             update.name = itemName;
@@ -72,7 +72,7 @@ export const delUser = async (req, res) => {
         const file = await fs.readFile('./users.json', 'utf-8');
         const json = JSON.parse(file);
         const itemId = req.params.id;
-        const del = json.findIndex((user) => user.id == itemId);
+        const del = json.findIndex(user => user.id == itemId);
         if (del != -1) {
             json.splice(del, 1);
             const myFile = JSON.stringify(json);
