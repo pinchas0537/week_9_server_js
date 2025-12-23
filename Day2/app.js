@@ -1,9 +1,12 @@
 import express from "express"
+import agentRouter from "./routers/agentR.js"
 
 const app = express()
 const port = 3000
 
 app.use(express.json())
+
+app.use("/agents",agentRouter)
 
 app.get("/", (req, res) => {
     res.send("Wolcome to server!")
