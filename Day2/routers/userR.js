@@ -4,7 +4,7 @@ import { validUser } from "../middleare/usersM.js";
 
 const router = express.Router()
 
-router.get("/",validUser,getAllUsers)
+router.get("/",getAllUsers)
 
 router.post("/",validUser,addUser)
 
