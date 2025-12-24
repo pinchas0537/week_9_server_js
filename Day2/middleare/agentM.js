@@ -1,13 +1,14 @@
 import { readfile } from "../cntrl/readInWriteFile.js"
 
-const path = './data/agent.json'
+const path = './data/users.json'
 
 export const valideteAgent = async (req,res,next)=>{
+    const {username} = req.headers
     const valid = await readfile(path)
-    const find = valid.find(egen => Number(req.params.id) === egen.id)
-    if(Number(req.params.id) === (find.id)){
+    const find = valid.find(user => username === user.username)
+    if(find){
         next()
     }else {
-        next("not funde")
+        res.status(403).json("not funde")
     }
 }

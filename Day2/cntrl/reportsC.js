@@ -27,11 +27,12 @@ export const getReportsById = async (req, res) => {
 
 export const addReport = async (req, res) => {
     try {
+        const newReport = { id: report.length + 1, date: new Date().toISOString(), content: req.body.content, agentId: req.body.agentId}
         const report = await readfile(path)
-        const newReport = { id: report.length + 1, date: new Date(), content: req.body.content, agentId: req.body.agentId}
         if (req.body.content && req.body.agentId) {
             report.push(newReport)
             await writefile(path, report)
+            await reportCount(req,res)
             res.json(newReport)
         }else{res.status(400).json({"message":"Missing content or agentId!"})}
     } catch (error) {
@@ -44,7 +45,6 @@ export const editReportById = async (req, res) => {
         const read = await readfile(path)
         const id = req.params.id
         const {content,agentId} = req.body
-        // const {xusername}=req.headers["x-username"]
         const update = read.find(user => user.id == id
         )
         if (update) {
@@ -82,3 +82,18 @@ export const deleteReport = async (req, res) => {
         res.json({ error });
     }
 };
+
+const reportCount = async (req,res) =>{
+    try {
+        const {agentId} = req.body
+        const fileJson = await readfile('./data/agent.json')
+        const findFile = fileJson.find(agent => agent.id === agentId)
+        if(findFile){
+            findFile.reportsCount += 1;
+            await writefile('./data/agent.json',fileJson)
+        }
+        else{res.status(404).json("No such agent found!")}
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}
