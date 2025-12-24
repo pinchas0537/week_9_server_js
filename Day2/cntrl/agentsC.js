@@ -26,11 +26,12 @@ export const getAgentById = async (req, res) => {
 
 export const addAgent = async (req, res) => {
     try {
-        const agent = await readfile(path)
-        const newAgent = { id: agent.length + 1, name: req.body.name, nickname: req.body.nickname, reportsCount: 0 }
+        const agents = await readfile(path)
+        const newAgent = { id: agents.length + 1, name: req.body.name, nickname: req.body.nickname, reportsCount: 0 }
+        if(agents.find(agent => agent.id === newAgent.id)) res.status(409).json({"message":"Such a username already exists!"})
         if (req.body.name && req.body.nickname) {
-            agent.push(newAgent)
-            await writefile(path, agent)
+            agents.push(newAgent)
+            await writefile(path, agents)
             res.json(newAgent)
         }else{res.status(400).json({"message":"Missing name or nickname!"})}
     } catch (error) {

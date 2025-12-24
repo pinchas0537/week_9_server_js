@@ -10,8 +10,8 @@ router.get("/:id",getAgentById)
 
 router.post("/",valideteAgent,addAgent)
 
-router.put("/:id",editAgentById)
+router.put("/:id",valideteAgent,editAgentById)
 
-router.delete("/:id",delAgent)
+router.delete("/:id",valideteAgent,delAgent)
 
 export default router

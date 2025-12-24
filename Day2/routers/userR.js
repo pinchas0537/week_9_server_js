@@ -1,14 +1,15 @@
 import express from "express";
 import { addUser, deleteUser, editUserById, getAllUsers } from "../cntrl/userC.js";
+import { validUser } from "../middleare/usersM.js";
 
 const router = express.Router()
 
-router.get("/",getAllUsers)
+router.get("/",validUser,getAllUsers)
 
-router.post("/",addUser)
+router.post("/",validUser,addUser)
 
-router.put("/:username", editUserById)
+router.put("/:username",validUser ,editUserById)
 
-router.delete("/:username",deleteUser)
+router.delete("/:username",validUser,deleteUser)
 
 export default router
