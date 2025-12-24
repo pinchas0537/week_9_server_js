@@ -28,10 +28,10 @@ export const getReportsById = async (req, res) => {
 export const addReport = async (req, res) => {
     try {
         const report = await readfile(path)
-        const newReport = { id: report.length + 1, date: new Date(), content: req.body.content, agentId: req.header.agentId}
-        if (req.body.content && req.header.agentId) {
+        const newReport = { id: report.length + 1, date: new Date(), content: req.body.content, agentId: req.body.agentId}
+        if (req.body.content && req.body.agentId) {
             report.push(newReport)
-            await writefile(path, agent)
+            await writefile(path, report)
             res.json(newReport)
         }else{res.status(400).json({"message":"Missing content or agentId!"})}
     } catch (error) {
@@ -39,47 +39,46 @@ export const addReport = async (req, res) => {
     }
 }
 
-// export const editAgentById = async (req, res) => {
-//     try {
-//         const read = await readfile(path)
-//         const id = req.params.id;
-//         const name = req.body.name;
-//         const nickname = req.body.nickname;
+export const editReportById = async (req, res) => {
+    try {
+        const read = await readfile(path)
+        const id = req.params.id
+        const {content,agentId} = req.body
+        // const {xusername}=req.headers["x-username"]
+        const update = read.find(user => user.id == id
+        )
+        if (update) {
+            if (content) update.content = content;
+            if (agentId) update.agentId = agentId;
+            await writefile(path, read);
+            res.json({ "messege": "You have successfully edited." });
+        }
+        else {
+            res.status(404);
+            res.send();
+        }
+    } catch (error) {
+        res.status(500);
+        res.json({ error: error.message });
+    }
+};
 
-//         const update = read.find(user => user.id == id
-//         )
-//         if (update) {
-//             if (name) update.name = name;
-//             if (nickname) update.nickname = nickname;
-//             await writefile(path, read);
-//             res.json({ "messege": "You have successfully edited." });
-//         }
-//         else {
-//             res.status(404);
-//             res.send();
-//         }
-//     } catch (error) {
-//         res.status(500);
-//         res.json({ error: error.message });
-//     }
-// };
-
-// export const delAgent = async (req, res) => {
-//     try {
-//         const read = await readfile(path)
-//         const id = req.params.id;
-//         const del = read.findIndex(user => user.id == id);
-//         if (del != -1) {
-//             read.splice(del, 1);
-//             await writefile(path, read)
-//             res.json({ "deleted": true });
-//         }
-//         else {
-//             res.status(404);
-//             res.send();
-//         }
-//     } catch (error) {
-//         res.status(500);
-//         res.json({ error });
-//     }
-// };
+export const deleteReport = async (req, res) => {
+    try {
+        const read = await readfile(path)
+        const id = req.params.id;
+        const del = read.findIndex(user => user.id == id);
+        if (del != -1) {
+            read.splice(del, 1);
+            await writefile(path, read)
+            res.json({ "deleted": true });
+        }
+        else {
+            res.status(404);
+            res.send();
+        }
+    } catch (error) {
+        res.status(500);
+        res.json({ error });
+    }
+};
